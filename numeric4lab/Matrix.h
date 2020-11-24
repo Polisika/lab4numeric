@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <math.h>
+#include <ostream>
 #define T double
 using namespace std;
 
@@ -22,7 +23,7 @@ int gauss(vector<vector<T>>& A, vector<T>& F, vector<T>& x);
 // -1 - количество итераций превысило разрешимое количество
 // 0 - успех.
 // ћетрики: Euclidean, l, max. ѕодробнее в определении Metrics.
-int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test);
+int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test, ostream& out);
 
 // ”множение матрицы на вектор
 // res - нулевой вектор размера B

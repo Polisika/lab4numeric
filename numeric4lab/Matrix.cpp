@@ -1,6 +1,7 @@
 #include "Matrix.h"
 #include "Calculations.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 double EPS = 1e-14;
@@ -285,7 +286,7 @@ int get_n(int num_test)
 // 1 - не нашлось beta, решение расходится
 // -1 - количество итераций превысило разрешимое количество
 // 0 - успех.
-int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test)
+int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test, ostream &out)
 {
     int iters = 0;
     int m = get_m(num_test), n = get_n(num_test);
@@ -296,6 +297,12 @@ int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test)
     vector<vector<T>> J(m);
     for (int i = 0; i < m; i++)
         J[i].resize(n);
+
+    out.imbue(locale(""));
+    out << "Iteration;beta;norm;";
+    for (int i = 0; i < n; i++)
+        out << "x" << to_string(i) << ";";
+    out << endl;
 
     while (iters < max_iter)
     {
@@ -341,17 +348,14 @@ int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test)
         x = xk;
 
         // Выведем на экран номер текущей итерации и beta   
-        cout << "Iteration: " << iters << ", beta: " << beta << endl;
-
+        out << iters << ";" << beta << ";";
+        T norm = vector_norm(Fk, metric);
+        out << norm << ";";
         // Найдем результат итерации xk+1 = xk + beta*delta_x
         for (int i = 0; i < n; i++)
-            cout << x[i] << " ";
-        cout << endl;
+            out << x[i] << ";";
+        out << endl;
 
-        // Выведем норму Fk
-        T norm = vector_norm(Fk, metric);
-        cout << "Norm: " << norm << endl << endl;
-        
         // Решение найдено
         if (norm / vector_norm(F0, metric) < eps2)
             return 0;
