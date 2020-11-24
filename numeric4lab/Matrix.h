@@ -1,4 +1,5 @@
 #pragma once
+#include "Calculations.h"
 #include <vector>
 #include <math.h>
 #include <ostream>
@@ -23,8 +24,4 @@ int gauss(vector<vector<T>>& A, vector<T>& F, vector<T>& x);
 // -1 - количество итераций превысило разрешимое количество
 // 0 - успех.
 // ћетрики: Euclidean, l, max. ѕодробнее в определении Metrics.
-int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test, ostream& out);
-
-// ”множение матрицы на вектор
-// res - нулевой вектор размера B
-//void matt_mul(vector<vector<T>>& A, vector<T>& B, vector<T>& res);
+int newton_solve(vector<T>& x, T eps2, Metrics metric, IGenerator& gen, ostream& out);
