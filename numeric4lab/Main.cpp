@@ -5,12 +5,6 @@ using namespace std;
 
 int main()
 {
-	/*
-	out << "Iteration;beta;norm;";
-	for (int i = 0; i < n; i++)
-		out << "x" << to_string(i) << ";";
-	out << endl;
-	*/
 	vector<T> x({ 0.9, 0.9 });
 	gen_test2 test;
 	vector<IGenerator*> v({&test});

@@ -1,8 +1,6 @@
 #pragma once
 #include "Calculations.h"
-#include <vector>
-#include <math.h>
-#include <ostream>
+
 #define T double
 using namespace std;
 

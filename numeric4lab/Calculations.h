@@ -1,6 +1,11 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include <vector>
+#include <math.h>
+#include <ostream>
+#include <fstream>
+#include <string>
+
 using namespace std;
 // ¬ычислени€ дл€ матрицы якоби и правой части
 #define T double

@@ -1,6 +1,6 @@
 #include "Matrix.h"
 #include <iostream>
-#include <string>
+
 
 using namespace std;
 T eps1 = 1e-30; // Ограничение для beta
