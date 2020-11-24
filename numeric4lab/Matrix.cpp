@@ -181,47 +181,52 @@ int gauss(vector<vector<T>>& A, vector<T>& F, vector<T>& x)
 }
 
 // Считает Евклидову норму вектора
-T vector_norm(vector<T>& F)
+T vector_norm(vector<T>& F, Metrics num)
 {
     T res = 0;
-    size_t size = F.size();
-    for (size_t i = 0; i < size; i++)
-        res += F[i] * F[i];
-    
-    return sqrt(res);
-}
+    int size = F.size();
+    int max = -INFINITY;
 
-// Считает Евклидову норму последнего столбца-вектора правой части
-T vector_norm(vector<vector<T>>& A)
-{
-    T res = 0;
-    size_t size = A.size();
-    for (size_t i = 0; i < size; i++)
-        res += A[size - 1][i] * A[size - 1][i];
+    switch (num)
+    {
+    case Metrics::euclidean:
+        for (int i = 0; i < size; i++)
+            res += F[i] * F[i];
+        res = sqrt(res);
+        break;
+    case Metrics::l:
+        for (int i = 0; i < size; i++)
+            res += abs(F[i]);
+        break;
+    //case Metrics::max:
+    //    for (int i = 0; i < size; i++)
+    //    {
+    //        T elem = abs(F[i]);
+    //        if (max < elem)
+    //            max = elem;
+    //    }
+    //    res = max;
+    //    break;
+    default:
+        throw new exception();
+    }
 
-    return sqrt(res);
+    return res;
 }
 
 // F генерируется сразу с минусом
 void gen_F(vector<T>& F, vector<T>& x, int num_test)
 {
-    int m = 0;
     switch (num_test)
     {
     case 1:
-        m = test1::m;
-        for (int i = 0; i < m; i++)
-            F[i] = -test1::get_F(i, x);
+        test1::get_F(F, x);
         break;
     case 2:
-        m = test2::m;
-        for (int i = 0; i < m; i++)
-            F[i] = -test2::get_F(i, x);
+        test2::get_F(F, x);
         break;
     case 3:
-        m = test3::m;
-        for (int i = 0; i < m; i++)
-            F[i] = -test3::get_F(i, x);
+        test3::get_F(F, x);
         break;
     }
 }
@@ -276,22 +281,11 @@ int get_n(int num_test)
     }
 }
 
-// Умножение матрицы на вектор
-// res - нулевой вектор размера B
-void matt_mul(vector<vector<T>>& A, vector<T>& B, vector<T>& res)
-{
-    size_t size = A.size();
-    for (size_t i = 0; i < size; i++)
-        for (size_t j = 0; j < size; j++)
-            res[i] += A[i][j] * B[j];
-}
-
-
 // Матрица имеет размерность n x n+1
 // 1 - не нашлось beta, решение расходится
 // -1 - количество итераций превысило разрешимое количество
 // 0 - успех.
-int newton_solve(vector<T>& x, T eps2, int num_test)
+int newton_solve(vector<T>& x, T eps2, Metrics metric, int num_test)
 {
     int iters = 0;
     int m = get_m(num_test), n = get_n(num_test);
@@ -316,20 +310,21 @@ int newton_solve(vector<T>& x, T eps2, int num_test)
 
         // Вычислим правую часть (подставить xk в систему A и получить значения с каждой строки)
         // Генерируется с отрицательной правой частью
-        F0 = Fk;
-        gen_F(Fk, x, num_test);
+        gen_F(F0, x, num_test);
 
         // Найдем delta_x решением Jx = -F
         vector<T> delta_x(n);
-        gauss(J, Fk, delta_x);
+        gauss(J, F0, delta_x);
 
         // Найдем beta
         T beta = 1;
         for (int i = 0; i < n; i++)
             xk[i] += beta * delta_x[i];
-        
+
+        gen_F(Fk, xk, num_test);
         // Пока норма правой части меньше текущей нормы
-        while (vector_norm(Fk) > vector_norm(F0)) 
+        T F0_norm = vector_norm(F0, metric);
+        while (vector_norm(Fk, metric) > F0_norm)
         {
             xk = x;
             beta /= 2;
@@ -341,7 +336,8 @@ int newton_solve(vector<T>& x, T eps2, int num_test)
             if (beta < eps1)
                 return 1;
         }
-
+        
+        // Новое приближение запишем в результирующий вектор
         x = xk;
 
         // Выведем на экран номер текущей итерации и beta   
@@ -353,11 +349,11 @@ int newton_solve(vector<T>& x, T eps2, int num_test)
         cout << endl;
 
         // Выведем норму Fk
-        T norm = vector_norm(Fk);
+        T norm = vector_norm(Fk, metric);
         cout << "Norm: " << norm << endl << endl;
         
         // Решение найдено
-        if (norm / vector_norm(F0) < eps2)
+        if (norm / vector_norm(F0, metric) < eps2)
             return 0;
 
         iters++;
