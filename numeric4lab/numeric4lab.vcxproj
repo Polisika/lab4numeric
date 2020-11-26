@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Calculations.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Research.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

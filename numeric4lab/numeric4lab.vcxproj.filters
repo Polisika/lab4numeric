@@ -13,13 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\Вычисления">
+      <UniqueIdentifier>{ec2e4308-528b-4556-9f72-d543f3a1a50a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Исследования">
+      <UniqueIdentifier>{fb96e832-0d5e-456f-8ed3-7501e7d8c008}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Calculations.h">
-      <Filter>Исходные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Вычисления</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculations.h">
+      <Filter>Исходные файлы\Исследования</Filter>
+    </ClInclude>
+    <ClInclude Include="Research.h">
+      <Filter>Исходные файлы\Исследования</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -27,10 +36,10 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Вычисления</Filter>
     </ClCompile>
     <ClCompile Include="Research.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Исследования</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

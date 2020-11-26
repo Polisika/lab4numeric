@@ -1,10 +1,9 @@
 #include "Matrix.h"
-#include <iostream>
 
 
 using namespace std;
-T eps1 = 1e-30; // Ограничение для beta
-int max_iter = 10000;
+T eps1 = 1e-15; // Ограничение для beta
+int max_iter = 100;
 
 // Определяем, какие компоненты delta_x нужно убрать
 // и какие столбцы нужно исключить из матрицы А
@@ -152,6 +151,8 @@ T vector_norm(vector<T>& F, Metrics num)
 }
 
 // Матрица имеет размерность n x n+1
+// x - начальное приближение. Туда же записывается ответ.
+// eps2 - условие выхода из итерационного процесса. Частное нормы текущей итерации и предыдущей < eps2
 // 1 - не нашлось beta, решение расходится
 // -1 - количество итераций превысило разрешимое количество
 // 0 - успех.
@@ -172,6 +173,8 @@ int newton_solve(vector<T>& x, T eps2, Metrics metric, IGenerator& gen, ostream 
 
     while (iters < max_iter)
     {
+        for (int i = 0; i < m; i++)
+            J[i].resize(3);
         // Вычислим матрицу Якоби с текущим значением x
         gen.get_J(J, x);
 
@@ -186,8 +189,17 @@ int newton_solve(vector<T>& x, T eps2, Metrics metric, IGenerator& gen, ostream 
         gen.get_F(F0, x);
 
         // Найдем delta_x решением Jx = -F
-        vector<T> delta_x(n);
-        gauss(J, F0, delta_x);
+        vector<T> buff_x(m);
+        gauss(J, F0, buff_x);
+
+        vector<T> delta_x(n, -1);
+        // Занулим компоненты вектора, которые исключили для решения СЛАУ.
+        for (auto& num : comp)
+            delta_x[num] = 0;
+        int с = 0;
+        for (int i = 0; i < n; i++)
+            if (delta_x[i] == -1)
+                delta_x[i] = buff_x[с++];
 
         // Найдем beta
         T beta = 1;
@@ -217,13 +229,17 @@ int newton_solve(vector<T>& x, T eps2, Metrics metric, IGenerator& gen, ostream 
         out << iters << ";" << beta << ";";
         T norm = vector_norm(Fk, metric);
         out << norm << ";";
-        // Найдем результат итерации xk+1 = xk + beta*delta_x
         for (int i = 0; i < n; i++)
             out << x[i] << ";";
+        for (int i = 0; i < m; i++)
+            out << Fk[i] << ";";
         out << endl;
 
         // Решение найдено
-        if (norm / vector_norm(F0, metric) < eps2)
+        T norm0 = vector_norm(F0, metric);
+        if (norm < 1e-30)
+            return 0;
+        if (norm / norm0 < eps2)
             return 0;
 
         iters++;
